@@ -50,7 +50,31 @@ def update_product(product_id):
         logger.error(f"Error updating product {product_id}: {e}", exc_info=True)
         return jsonify({"message": "Failed to update product", "error": str(e)}), 500
     
+    
+@admin_bp.route('/product/<string:product_id>',methods=['DELETE'])
+@admin_req
+def delete_product(product_id):
+    logger.info(f"Admin deleting product ID:{product_id}")
 
+    try:
+        success = admin_service.delete_product(product_id)
+        if success:
+            return jsonify({"message": "Product deleted successfully"}), 204
+        return jsonify({"message":"Product not found"}),404
+    except Exception as e:
+        logger.error(f"Error deleting product {product_id}: {e}", exc_info=True)
+        return jsonify({"message": "Failed to delete product", "error": str(e)}), 500
+
+@admin_bp.route("/products", methods=['GET'])
+@admin_req
+def get_all_products():
+    logger.info("Admin requesting all products.")
+    try:
+        products = admin_service.get_all_products()
+        return jsonify(products),200
+    except Exception as e:
+        logger.error(f"Error getting all products: {e}", exc_info=True)
+        return jsonify({"message": "Failed to retrieve products", "error": str(e)}), 500
 
                 
     
