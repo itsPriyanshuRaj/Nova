@@ -3,3 +3,27 @@ Info.md
 requirements.txt
 env
 config.py
+__pycache__/
+*.pyc
+*.log
+.Python
+.env
+venv/
+.venv/
+env/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store # macOS specific
+Thumbs.db # Windows specific
+
+# Virtual environments (common names)
+.direnv/
+pip-log.txt
+pip-delete-this-arg-files.txt
+
+# Database files
+data/
+db/
