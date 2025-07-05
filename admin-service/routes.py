@@ -76,6 +76,94 @@ def get_all_products():
         logger.error(f"Error getting all products: {e}", exc_info=True)
         return jsonify({"message": "Failed to retrieve products", "error": str(e)}), 500
 
+
+# User Management Routes
+
+@admin_bp.route("/users", methods=['GET'])
+@admin_req
+def get_all_users():
+    logger.info("Admin requesting all users")
+    try:
+        users = admin_service.get_all_users()
+        return jsonify(users),200
+    except Exception as e:
+        logger.error(f"Error getting all users: {e}",exc_info=True)
+        return jsonify({"message":"Failed to retrieve users","error":str(e)}),500
+    
+
+@admin_bp.route("/users/<string:user_id>", methods=['PUT'])
+@admin_req
+def update_user(user_id):
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Request must contain JSON data"}),400
+    logger.info(f"admin updating userID: {user_id}")
+
+    try:
+        user = admin_service.update_user(user_id,data)
+        if user:
+            return jsonify(user),200
+        return jsonify({"message":"user not found"}),404
+    except Exception as e:
+        logger.error(f"Error updating user {user_id}: {e}",exc_info=True)
+        return jsonify({"message":"Failed to update user", "error":str(e)}),500
+    
+# --- Order Management Routes ---
+
+@admin_bp.route('/orders', methods=['GET'])
+@admin_req
+def get_all_orders():
+    logger.info("Admin requesting all orders.")
+    try:
+        orders = admin_service.get_all_orders()
+        return jsonify(orders), 200
+    except Exception as e:
+        logger.error(f"Error getting all orders: {e}", exc_info=True)
+        return jsonify({"message": "Failed to retrieve orders", "error": str(e)}), 500
+
+@admin_bp.route('/orders/<string:order_id>/status', methods=['PUT'])
+@admin_req
+def update_order_status(order_id):
+   
+    data = request.get_json()
+    new_status = data.get('status')
+    if not new_status:
+        return jsonify({"message": "Status field is required"}), 400
+    logger.info(f"Admin updating order {order_id} status to: {new_status}")
+    try:
+        order = admin_service.update_order_status(order_id, new_status)
+        if order:
+            return jsonify(order), 200
+        return jsonify({"message": "Order not found"}), 404
+    except Exception as e:
+        logger.error(f"Error updating order {order_id} status: {e}", exc_info=True)
+        return jsonify({"message": "Failed to update order status", "error": str(e)}), 500
+
+# --- Other Admin Specific Routes (Examples) ---
+
+@admin_bp.route('/analytics/sales', methods=['GET'])
+@admin_req
+def get_sales_analytics():
+    
+    logger.info("Admin requesting sales analytics.")
+    try:
+        analytics_data = admin_service.get_sales_analytics()
+        return jsonify(analytics_data), 200
+    except Exception as e:
+        logger.error(f"Error getting sales analytics: {e}", exc_info=True)
+        return jsonify({"message": "Failed to retrieve sales analytics", "error": str(e)}), 500
+
+@admin_bp.route('/logs', methods=['GET'])
+@admin_req
+def get_admin_logs():
+    logger.info("Admin requesting internal action logs.")
+    try:
+        logs = admin_service.get_admin_logs()
+        return jsonify(logs), 200
+    except Exception as e:
+        logger.error(f"Error retrieving admin logs: {e}", exc_info=True)
+        return jsonify({"message": "Failed to retrieve admin logs", "error": str(e)}), 500
+
                 
     
 
